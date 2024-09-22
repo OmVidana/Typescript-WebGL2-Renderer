@@ -29,11 +29,11 @@ jobs:
               with:
                   bun-version: 'latest'
             - name: Install dependencies
-              uses: bun install
+              run: bun install
             - name: Build
-              uses: bun run build
+              run: bun run build
             - name: Setup Pages
-              uses: actions/configure-pages@v5
+              uses: actions/configure-pages@v4
             - name: Upload artifact
               uses: actions/upload-pages-artifact@v3
               with:
