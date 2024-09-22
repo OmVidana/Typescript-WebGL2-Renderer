@@ -1,0 +1,43 @@
+name: Deploy to GitHub Pages
+
+on:
+    push:
+        branches: [$default-branch]
+
+    workflow_dispatch:
+
+permissions:
+    contents: read
+    pages: write
+    id-token: write
+
+concurrency:
+    group: 'pages'
+    cancel-in-progress: false
+
+jobs:
+    build-and-deploy:
+        environment:
+            name: github-pages
+            url: ${{ steps.deployment.outputs.page_url }}
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+            - name: Set up Bun
+              uses: oven-sh/setup-bun@v1
+              with:
+                  bun-version: 'latest'
+            - name: Install dependencies
+              uses: bun install
+            - name: Build
+              uses: bun run build
+            - name: Setup Pages
+              uses: actions/configure-pages@v5
+            - name: Upload artifact
+              uses: actions/upload-pages-artifact@v3
+              with:
+                  path: './dist'
+            - name: Deploy to Github Pages
+              id: deployment
+              uses: action/deploy-pages@v4

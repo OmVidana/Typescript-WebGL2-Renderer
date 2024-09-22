@@ -1,0 +1,19 @@
+{
+    "name": "omarvidana_code",
+    "private": true,
+    "version": "1.0.0",
+    "type": "module",
+    "scripts": {
+        "dev": "bunx --bun vite --open",
+        "build": "bunx --bun vite build",
+        "preview": "bunx --bun vite preview"
+    },
+    "devDependencies": {
+        "autoprefixer": "^10.4.20",
+        "gl-matrix": "^3.4.3",
+        "postcss": "^8.4.47",
+        "tailwindcss": "^3.4.12",
+        "typescript": "^5.6.2",
+        "vite": "^5.4.7"
+    }
+}

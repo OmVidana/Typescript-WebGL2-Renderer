@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>WebGL2 Renderer</title>
+        <link rel="stylesheet" href="src/index.css" />
+    </head>
+    <body class="bg-primary font-montserrat h-[175dvh] md:h-dvh">
+        <div
+            id="header"
+            class="bg-primary-900 grid h-20 w-full max-sm:sticky max-sm:top-0 p-4 md:h-[10%]"
+        >
+            <h1
+                class="text-secondary text-center text-xl self-center font-black md:text-2xl"
+            >
+                WebGL2 Renderer
+            </h1>
+        </div>
+        <div
+            id="content"
+            class="h-auto grid grid-cols-1 md:grid-cols-3 md:h-[90dvh]"
+        >
+            <!-- Jerarquía con scroll -->
+            <div
+                id="objectsHierarchy"
+                class="h-[40dvh] flex flex-col md:h-[90dvh]"
+            >
+                <h2
+                    class="text-secondary-200 text-center font-bold text-lg m-8 md:text-xl md:m-4"
+                >
+                    Hierarchy
+                </h2>
+                <div
+                    id="objectsHierarchyContainer"
+                    class="grid m-8 overflow-auto md:m-4"
+                ></div>
+            </div>
+
+            <!-- Canvas y transformaciones -->
+            <div
+                id="canvasZone"
+                class="flex flex-col items-center justify-center h-[110dvh] md:h-[90dvh]"
+            >
+                <canvas
+                    id="glCanvas"
+                    class="bg-secondary-200 w-[75%] md:w-[55%]"
+                    width="320"
+                    height="320"
+                ></canvas>
+                <div class="w-full p-4">
+                    <h2 class="text-secondary-200 font-bold text-center">
+                        Transformations
+                    </h2>
+
+                    <!-- Escala -->
+                    <div class="my-2">
+                        <h3
+                            class="text-secondary-200 font-semibold text-center"
+                        >
+                            Scale
+                        </h3>
+                        <div class="grid grid-cols-1 lg:grid-cols-3">
+                            <div
+                                class="flex flex-row items-center justify-center px-2 lg:flex-col"
+                            >
+                                <label for="scaleX" class="text-center w-[10%]"
+                                    >X</label
+                                >
+                                <input
+                                    type="range"
+                                    id="scaleX"
+                                    min="-10"
+                                    max="10"
+                                    value="1"
+                                    step="0.1"
+                                    class="w-[80%] mx-4 lg:w-[90%]"
+                                    oninput="document.getElementById('scaleXValue').textContent = this.value"
+                                />
+                                <span
+                                    id="scaleXValue"
+                                    class="text-center w-[10%]"
+                                    >1</span
+                                >
+                            </div>
+                            <div
+                                class="flex flex-row items-center justify-center px-2 lg:flex-col"
+                            >
+                                <label for="scaleY" class="text-center w-[10%]"
+                                    >Y</label
+                                >
+                                <input
+                                    type="range"
+                                    id="scaleY"
+                                    min="-10"
+                                    max="10"
+                                    value="1"
+                                    step="0.1"
+                                    class="w-[80%] mx-4 lg:w-[90%]"
+                                    oninput="document.getElementById('scaleYValue').textContent = this.value"
+                                />
+                                <span
+                                    id="scaleYValue"
+                                    class="text-center w-[10%]"
+                                    >1</span
+                                >
+                            </div>
+                            <div
+                                class="flex flex-row items-center justify-center px-2 lg:flex-col"
+                            >
+                                <label for="scaleZ" class="text-center w-[10%]"
+                                    >Z</label
+                                >
+                                <input
+                                    type="range"
+                                    id="scaleZ"
+                                    min="-10"
+                                    max="10"
+                                    value="1"
+                                    step="0.1"
+                                    class="w-[80%] mx-4 lg:w-[90%]"
+                                    oninput="document.getElementById('scaleZValue').textContent = this.value"
+                                />
+                                <span
+                                    id="scaleZValue"
+                                    class="text-center w-[10%]"
+                                    >1</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rotación -->
+                    <div class="my-2">
+                        <h3
+                            class="text-secondary-200 font-semibold text-center"
+                        >
+                            Rotation
+                        </h3>
+                        <div class="grid grid-cols-1 lg:grid-cols-3">
+                            <div
+                                class="flex flex-row items-center justify-center px-2 lg:flex-col"
+                            >
+                                <label for="rotateX" class="text-center w-[10%]"
+                                    >X</label
+                                >
+                                <input
+                                    type="range"
+                                    id="rotateX"
+                                    min="-180"
+                                    max="180"
+                                    value="0"
+                                    step="0.1"
+                                    class="w-[80%] mx-4 lg:w-[90%]"
+                                    oninput="document.getElementById('rotateXValue').textContent = this.value"
+                                />
+                                <span
+                                    id="rotateXValue"
+                                    class="text-center w-[10%]"
+                                    >0</span
+                                >
+                            </div>
+                            <div
+                                class="flex flex-row items-center justify-center px-2 lg:flex-col"
+                            >
+                                <label for="rotateY" class="text-center w-[10%]"
+                                    >Y</label
+                                >
+                                <input
+                                    type="range"
+                                    id="rotateY"
+                                    min="-180"
+                                    max="180"
+                                    value="0"
+                                    step="0.1"
+                                    class="w-[80%] mx-4 lg:w-[90%]"
+                                    oninput="document.getElementById('rotateYValue').textContent = this.value"
+                                />
+                                <span
+                                    id="rotateYValue"
+                                    class="text-center w-[10%]"
+                                    >0</span
+                                >
+                            </div>
+                            <div
+                                class="flex flex-row items-center justify-center px-2 lg:flex-col"
+                            >
+                                <label for="rotateZ" class="text-center w-[10%]"
+                                    >Z</label
+                                >
+                                <input
+                                    type="range"
+                                    id="rotateZ"
+                                    min="-180"
+                                    max="180"
+                                    value="0"
+                                    step="0.1"
+                                    class="w-[80%] mx-4 lg:w-[90%]"
+                                    oninput="document.getElementById('rotateZValue').textContent = this.value"
+                                />
+                                <span
+                                    id="rotateZValue"
+                                    class="text-center w-[10%]"
+                                    >0</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Traslación -->
+                    <div class="my-2">
+                        <h3
+                            class="text-secondary-200 font-semibold text-center"
+                        >
+                            Translation
+                        </h3>
+                        <div class="grid grid-cols-1 lg:grid-cols-3">
+                            <div
+                                class="flex flex-row items-center justify-center px-2 lg:flex-col"
+                            >
+                                <label
+                                    for="translateX"
+                                    class="text-center w-[10%]"
+                                    >X</label
+                                >
+                                <input
+                                    type="range"
+                                    id="translateX"
+                                    min="-10"
+                                    max="10"
+                                    value="0"
+                                    step="0.1"
+                                    class="w-[80%] mx-4 lg:w-[90%]"
+                                    oninput="document.getElementById('translateXValue').textContent = this.value"
+                                />
+                                <span
+                                    id="translateXValue"
+                                    class="text-center w-[10%]"
+                                    >0</span
+                                >
+                            </div>
+                            <div
+                                class="flex flex-row items-center justify-center px-2 lg:flex-col"
+                            >
+                                <label
+                                    for="translateY"
+                                    class="text-center w-[10%]"
+                                    >Y</label
+                                >
+                                <input
+                                    type="range"
+                                    id="translateY"
+                                    min="-10"
+                                    max="10"
+                                    value="0"
+                                    step="0.1"
+                                    class="w-[80%] mx-4 lg:w-[90%]"
+                                    oninput="document.getElementById('translateYValue').textContent = this.value"
+                                />
+                                <span
+                                    id="translateYValue"
+                                    class="text-center w-[10%]"
+                                    >0</span
+                                >
+                            </div>
+                            <div
+                                class="flex flex-row items-center justify-center px-2 lg:flex-col"
+                            >
+                                <label
+                                    for="translateZ"
+                                    class="text-center w-[10%]"
+                                    >Z</label
+                                >
+                                <input
+                                    type="range"
+                                    id="translateZ"
+                                    min="-10"
+                                    max="10"
+                                    value="0"
+                                    step="0.1"
+                                    class="w-[80%] mx-4 lg:w-[90%]"
+                                    oninput="document.getElementById('translateZValue').textContent = this.value"
+                                />
+                                <span
+                                    id="translateZValue"
+                                    class="text-center w-[10%]"
+                                    >0</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Color -->
+                    <div class="my-2">
+                        <h3 class="font-semibold text-center">Color</h3>
+                        <label
+                            for="colorPicker"
+                            class="text-tertiary-300 block text-center"
+                        >
+                            Choose Color
+                        </label>
+                        <input
+                            type="color"
+                            id="colorPicker"
+                            value="#333333"
+                            class="w-full h-8"
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Selector de objetos -->
+            <div
+                id="objectsSelector"
+                class="flex flex-col h-[25dvh] md:h-[90dvh] p-4"
+            >
+                <h2
+                    class="text-secondary-200 text-center font-bold text-lg mb-4 md:text-xl"
+                >
+                    Selector
+                </h2>
+                <div
+                    id="buttonsContainer"
+                    class="flex flex-grow flex-col justify-between"
+                >
+                    <button
+                        id="addTriangle"
+                        class="bg-secondary hover:bg-secondary-300 rounded-2xl my-1 flex-grow text-primary-900 font-semibold"
+                    >
+                        Add Triangle
+                    </button>
+                    <button
+                        id="addSquare"
+                        class="bg-secondary hover:bg-secondary-300 rounded-2xl my-1 flex-grow text-primary-900 font-semibold"
+                    >
+                        Add Square
+                    </button>
+                    <button
+                        id="addCircle"
+                        class="bg-secondary hover:bg-secondary-300 rounded-2xl my-1 flex-grow text-primary-900 font-semibold"
+                    >
+                        Add Circle
+                    </button>
+                    <button
+                        id="addCube"
+                        class="bg-secondary hover:bg-secondary-300 rounded-2xl my-1 flex-grow text-primary-900 font-semibold"
+                    >
+                        Add Cube
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <script type="module" src="src/main.ts"></script>
+    </body>
+</html>
